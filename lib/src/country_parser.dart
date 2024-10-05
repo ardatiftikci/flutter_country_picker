@@ -67,6 +67,10 @@ class CountryParser {
     return _getFromPhoneCode(phoneCode);
   }
 
+  static Country parsePhoneCodeWithCountryName(String phoneCode, String countryName) {
+    return _getFromPhoneCodeAndCountryName(phoneCode, countryName);
+  }
+
   /// Returns a single country that matches the given [countryCode] (iso2_cc).
   ///
   /// Returns null if no matching element is found.
@@ -140,6 +144,15 @@ class CountryParser {
         (Map<String, dynamic> c) => c['e164_cc'] == phoneCode,
       ),
     );
+  }
+
+  static Country _getFromPhoneCodeAndCountryName(String phoneCode, String countryName) {
+    final List<Country> possibleCountries = countryCodes.where(
+          (Map<String, dynamic> c) => c['e164_cc'] == phoneCode,
+    ).map((e) => Country.from(json: e)).toList();
+
+    final Country? selectedCountry = possibleCountries.where((element) => element.name==countryName,).firstOrNull;
+    return selectedCountry ?? possibleCountries.first;
   }
 
   /// Returns a country that matches the [countryCode] (iso2_cc).
